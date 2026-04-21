@@ -1,0 +1,5 @@
+/build/
+benchmark_results.csv
+*.png
+reports/
+.DS_Store
