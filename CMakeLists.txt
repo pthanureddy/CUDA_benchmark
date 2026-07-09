@@ -12,6 +12,12 @@ add_library(cudabench_cpu
 )
 target_include_directories(cudabench_cpu PUBLIC include)
 
+if(MSVC)
+  target_compile_options(cudabench_cpu PRIVATE /W4 /permissive-)
+else()
+  target_compile_options(cudabench_cpu PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
 add_executable(cpu_reference_tests tests/test_cpu_reference.cpp)
 target_link_libraries(cpu_reference_tests PRIVATE cudabench_cpu)
 

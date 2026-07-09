@@ -1,34 +1,23 @@
 # CUDA Parallel Computing Benchmarking Suite
 
-A portfolio-ready CUDA/C++ benchmarking project built around three classic GPU workloads:
+CUDA/C++ benchmarking project for three GPU-oriented workloads:
 
-- matrix multiplication (**naive vs shared-memory tiled**)
+- matrix multiplication
 - image convolution filters
 - parallel reduction
 
-It includes CPU reference implementations, optional CUDA builds, Linux-friendly CMake setup, correctness validation, and simple result plotting.
+The repository includes CPU reference implementations, optional CUDA kernels,
+correctness validation against CPU outputs, CSV benchmark export, a plotting
+script, and Linux CI that verifies the CPU-only build path.
 
-## Why this repo works for applications
+## Why This Project Exists
 
-- Demonstrates real GPU programming concepts instead of only theory
-- Shows side-by-side **CPU baseline vs GPU kernels**
-- Includes **floating-point correctness validation** against CPU reference outputs
-- Keeps the project usable even on machines **without a local GPU**
-- Adds a practical path for **Nsight Systems profiling** and benchmark export
+The project demonstrates practical GPU programming concepts while staying
+usable on machines without a local NVIDIA GPU. CI runs the CPU reference build
+and smoke tests; full CUDA timing requires a CUDA-capable machine, Google Colab
+with GPU enabled, or a self-hosted runner with NVIDIA tooling.
 
-## Project structure
-
-- `src/cpu_reference.cpp` — CPU baseline implementations
-- `src/matrix_mul.cu` — naive and shared-memory matrix multiplication kernels
-- `src/convolution.cu` — 2D convolution kernel
-- `src/reduction.cu` — tree-style parallel reduction kernel
-- `src/main.cpp` — CLI entry point
-- `python/plot_results.py` — turn benchmark CSV output into a chart
-- `scripts/nsight_profile_example.sh` — example profiling command
-
-## Build CPU-only mode
-
-This works on any Linux machine with a C++ compiler and CMake:
+## Build CPU-Only Mode
 
 ```bash
 cmake -S . -B build -DCUDABENCH_ENABLE_CUDA=OFF
@@ -36,56 +25,51 @@ cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
 
-## Build with CUDA
-
-On a machine with `nvcc` available:
+## Build With CUDA
 
 ```bash
 cmake -S . -B build -DCUDABENCH_ENABLE_CUDA=ON
 cmake --build build --parallel
 ```
 
-## Run examples
-
-CPU smoke test:
+## Run Examples
 
 ```bash
 ./build/cuda_bench cpu-smoke
-```
-
-Matrix multiplication benchmark:
-
-```bash
 ./build/cuda_bench matmul 1024 20
-```
-
-Convolution benchmark:
-
-```bash
 ./build/cuda_bench convolution 1024 1024 20
-```
-
-Reduction benchmark:
-
-```bash
 ./build/cuda_bench reduction 1048576 50
 ```
 
-Results are written to `benchmark_results.csv`, which you can plot with:
+Results are written to `benchmark_results.csv`.
 
 ```bash
 python3 python/plot_results.py benchmark_results.csv
 ```
 
-## Suggested GitHub repo description
+## Repository Layout
 
-> CUDA benchmarking suite with matrix multiplication, convolution, and reduction kernels; CPU baselines, validation, plotting, and Linux CMake setup.
+```text
+include/cudabench/     CPU and CUDA benchmark APIs
+src/cpu_reference.cpp  CPU baselines and CSV export
+src/*.cu               Optional CUDA kernels
+src/main.cpp           CLI benchmark runner
+tests/                 CPU correctness smoke tests
+python/                Result plotting script
+scripts/               Nsight profiling helper
+.github/workflows/     Ubuntu CPU-only CMake build and test workflow
+```
 
-## Suggested CV line
+## Honest Scope Note
 
-**CUDA Parallel Computing Benchmarking Suite** | CUDA C++, C++, Python, Linux | 2026  
-Implemented CUDA kernels for matrix multiplication, convolution, and reduction; benchmarked CPU vs GPU performance, validated outputs against CPU references, and added scripts for profiling and result visualization.
+GitHub-hosted CI in this repository runs CPU-only correctness and build tests.
+The CUDA kernels are included and build when `nvcc` is available, but this repo
+does not publish GPU speedup numbers unless they are measured on a CUDA-capable
+machine.
 
-## Honest scope note
+## Resume-Ready Summary
 
-GitHub-hosted CI in this repo runs CPU-only smoke tests. Full GPU benchmarking requires a CUDA-capable machine, Google Colab with GPU enabled, or a self-hosted runner with NVIDIA tooling installed.
+Built a CUDA/C++ benchmark suite with CPU references, optional CUDA kernels for
+matrix multiplication, image convolution, and parallel reduction, correctness
+validation, CSV result export, plotting support, and Linux CPU-only GitHub
+Actions CI.
